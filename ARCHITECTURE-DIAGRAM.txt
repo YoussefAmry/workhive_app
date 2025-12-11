@@ -1,0 +1,117 @@
+# WorkHive Architecture Diagram
+
+```
+                                    ┌─────────────────────────┐
+                                    │   Eureka Discovery      │
+                                    │   Service Registry      │
+                                    │   Port: 8761           │
+                                    └───────────┬─────────────┘
+                                                │
+                                                │ Registration
+                                                │
+                    ┌───────────────────────────┼────────────────────────────┐
+                    │                           │                            │
+                    ▼                           ▼                            ▼
+        ┌───────────────────┐     ┌────────────────────────┐    ┌──────────────────┐
+        │  Config Server    │     │   API Gateway          │    │  All Services    │
+        │  Port: 8888       │     │   Port: 8080          │    │  Register Here   │
+        └───────────────────┘     └────────┬───────────────┘    └──────────────────┘
+                                            │
+                                            │ Routes
+                                            │
+        ┌───────────────────────────────────┼──────────────────────────────────────┐
+        │                                   │                                      │
+        ▼                                   ▼                                      ▼
+┌──────────────────┐            ┌──────────────────┐                  ┌──────────────────┐
+│  REST Services   │            │ GraphQL Service  │                  │  SOAP Service    │
+├──────────────────┤            ├──────────────────┤                  ├──────────────────┤
+│ USER-SERVICE     │            │ Logs-service     │                  │ NOTIFICATION-    │
+│ Port: 8081       │            │ Port: 8084       │                  │ SERVICE          │
+│ gRPC: 9091       │◄───────┐   │ gRPC: 9094       │◄───────┐         │ Port: 8085       │
+├──────────────────┤        │   ├──────────────────┤        │         └──────────────────┘
+│ TEAM-SERVICE     │        │   │ /graphql         │        │
+│ Port: 8082       │        │   │ /graphiql        │        │
+│ gRPC: 9092       │◄───┐   │   └──────────────────┘        │
+├──────────────────┤    │   │                               │
+│ PROJECT-SERVICE  │    │   │                               │
+│ Port: 8083       │    │   │                               │
+│ gRPC: 9093       │◄─┐ │   │                               │
+└──────────────────┘  │ │   │                               │
+                      │ │   │                               │
+                      │ │   │   gRPC Calls                  │
+                      │ │   │   (Statistics)                │
+                      │ │   │                               │
+                      │ │   └───────────────────────────────┤
+                      │ └───────────────────────────────────┤
+                      └─────────────────────────────────────┤
+                                                            │
+                                            ┌───────────────┘
+                                            │
+                                            ▼
+                                ┌──────────────────────┐
+                                │  ANALYTICS-SERVICE   │
+                                │  gRPC Client         │
+                                │  Port: 8086          │
+                                ├──────────────────────┤
+                                │ Aggregates stats     │
+                                │ from 4 gRPC servers: │
+                                │ • USER (9091)        │
+                                │ • TEAM (9092)        │
+                                │ • PROJECT (9093)     │
+                                │ • LOGS (9094)        │
+                                └──────────────────────┘
+
+
+════════════════════════════════════════════════════════════════════════════
+
+COMMUNICATION PROTOCOLS:
+
+1. REST API (OpenFeign)
+   USER-SERVICE ←→ TEAM-SERVICE ←→ PROJECT-SERVICE
+   
+2. GraphQL
+   Client ←→ Logs-service (queries & mutations)
+   
+3. SOAP
+   Client ←→ NOTIFICATION-SERVICE (WSDL/XSD)
+   
+4. gRPC
+   ANALYTICS-SERVICE (client) ←→ 4 Services (servers)
+
+════════════════════════════════════════════════════════════════════════════
+
+DATA FLOW EXAMPLE:
+
+1. User registers (REST)
+   POST /api/auth/register → USER-SERVICE
+
+2. Activity logged (GraphQL)
+   mutation logActivity → Logs-service
+
+3. Notification sent (SOAP)
+   sendNotificationRequest → NOTIFICATION-SERVICE → calls USER-SERVICE (REST)
+
+4. Analytics dashboard (gRPC)
+   GET /api/analytics/dashboard → ANALYTICS-SERVICE
+   → gRPC call to USER-SERVICE (9091)
+   → gRPC call to PROJECT-SERVICE (9093)
+   → gRPC call to TEAM-SERVICE (9092)
+   → gRPC call to LOGS-SERVICE (9094)
+   → Aggregates results → Returns dashboard
+
+════════════════════════════════════════════════════════════════════════════
+
+TECHNOLOGY STACK:
+
+Framework:       Spring Boot 3.2.5, Spring Cloud 2023.0.1
+Database:        H2 (in-memory)
+Service Mesh:    Eureka Discovery, Spring Cloud Gateway
+REST:            OpenFeign, Resilience4J
+GraphQL:         Spring GraphQL
+SOAP:            Spring Web Services, JAXB
+gRPC:            gRPC 1.60.0, Protocol Buffers 3.25.1, gRPC Spring Boot 3.1.0
+Security:        Spring Security, JWT
+Build:           Maven, Protobuf Maven Plugin
+
+════════════════════════════════════════════════════════════════════════════
+```

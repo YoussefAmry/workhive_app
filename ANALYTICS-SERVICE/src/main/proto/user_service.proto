@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.workhive.analyticsservice.grpc.user";
+option java_outer_classname = "UserServiceProto";
+
+package user;
+
+// User Statistics Service
+service UserStatisticsService {
+  rpc GetUserCount(UserCountRequest) returns (UserCountResponse);
+  rpc GetUserById(UserRequest) returns (UserResponse);
+}
+
+message UserCountRequest {
+  // Empty request - get total count
+}
+
+message UserCountResponse {
+  int32 totalUsers = 1;
+  int32 activeUsers = 2;
+}
+
+message UserRequest {
+  int64 userId = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string firstName = 4;
+  string lastName = 5;
+  bool active = 6;
+}

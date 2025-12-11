@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.workhive.logsservice.grpc";
+option java_outer_classname = "LogsServiceProto";
+
+package logs;
+
+// Logs Statistics Service
+service LogsStatisticsService {
+  rpc GetActivityCount(ActivityCountRequest) returns (ActivityCountResponse);
+}
+
+message ActivityCountRequest {
+  // Empty request - get total activity count
+}
+
+message ActivityCountResponse {
+  int32 totalActivities = 1;
+  int32 recentActivities = 2;
+}

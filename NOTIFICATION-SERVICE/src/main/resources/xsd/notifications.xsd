@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://workhive.com/notification"
+           targetNamespace="http://workhive.com/notification"
+           elementFormDefault="qualified">
+
+    <!-- Send Notification Request -->
+    <xs:element name="sendNotificationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userId" type="xs:long"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="type" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Notification Response -->
+    <xs:element name="notificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long" minOccurs="0"/>
+                <xs:element name="userId" type="xs:long" minOccurs="0"/>
+                <xs:element name="message" type="xs:string" minOccurs="0"/>
+                <xs:element name="type" type="xs:string" minOccurs="0"/>
+                <xs:element name="isRead" type="xs:boolean" minOccurs="0"/>
+                <xs:element name="timestamp" type="xs:string" minOccurs="0"/>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Notifications Request -->
+    <xs:element name="getNotificationsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Notifications Response -->
+    <xs:element name="getNotificationsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="notification" type="tns:notificationResponse" maxOccurs="unbounded" minOccurs="0"/>
+                <xs:element name="totalCount" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Mark as Read Request -->
+    <xs:element name="markAsReadRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="notificationId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="notificationResponse">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="0"/>
+            <xs:element name="userId" type="xs:long" minOccurs="0"/>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+            <xs:element name="type" type="xs:string" minOccurs="0"/>
+            <xs:element name="isRead" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="timestamp" type="xs:string" minOccurs="0"/>
+            <xs:element name="success" type="xs:boolean"/>
+            <xs:element name="errorMessage" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

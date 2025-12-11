@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.workhive.analyticsservice.grpc.project";
+option java_outer_classname = "ProjectServiceProto";
+
+package project;
+
+// Project Statistics Service
+service ProjectStatisticsService {
+  rpc GetProjectCount(ProjectCountRequest) returns (ProjectCountResponse);
+  rpc GetProjectById(ProjectRequest) returns (ProjectResponse);
+}
+
+message ProjectCountRequest {
+  // Empty request - get total count
+}
+
+message ProjectCountResponse {
+  int32 totalProjects = 1;
+  int32 completedProjects = 2;
+  int32 inProgressProjects = 3;
+}
+
+message ProjectRequest {
+  int64 projectId = 1;
+}
+
+message ProjectResponse {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  string status = 4;
+  int64 createdBy = 5;
+  int64 teamId = 6;
+}

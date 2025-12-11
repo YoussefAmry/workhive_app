@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.workhive.analyticsservice.grpc.team";
+option java_outer_classname = "TeamServiceProto";
+
+package team;
+
+// Team Statistics Service
+service TeamStatisticsService {
+  rpc GetTeamCount(TeamCountRequest) returns (TeamCountResponse);
+  rpc GetTeamById(TeamRequest) returns (TeamResponse);
+}
+
+message TeamCountRequest {
+  // Empty request - get total count
+}
+
+message TeamCountResponse {
+  int32 totalTeams = 1;
+  int32 averageTeamSize = 2;
+}
+
+message TeamRequest {
+  int64 teamId = 1;
+}
+
+message TeamResponse {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 managerId = 4;
+  int32 memberCount = 5;
+}
